@@ -41,6 +41,12 @@ function MiFlowerCarePlugin(log, config) {
         this.lowLightAlert = false;
     }
 
+    if (config.lowBatteryWarningLevel != null && typeof config.lowBatteryWarningLevel === "number") {
+        this.lowBatteryWarningLevel = config.lowBatteryWarningLevel;
+    } else {
+        this.lowBatteryWarningLevel = 10;
+    }
+
     // Setup services
     this.setUpServices();
 
@@ -101,25 +107,25 @@ function MiFlowerCarePlugin(log, config) {
             that.batteryService.getCharacteristic(Characteristic.BatteryLevel)
                 .updateValue(data.batteryLevel);
             that.batteryService.getCharacteristic(Characteristic.StatusLowBattery)
-                .updateValue(data.batteryLevel <= 10 ? Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW : Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL);
+                .updateValue(data.batteryLevel <= that.lowBatteryWarningLevel ? Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW : Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL);
 
             that.lightService.getCharacteristic(Characteristic.StatusLowBattery)
-                .updateValue(data.batteryLevel <= 10 ? Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW : Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL);
+                .updateValue(data.batteryLevel <= that.lowBatteryWarningLevel ? Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW : Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL);
 
             that.tempService.getCharacteristic(Characteristic.StatusLowBattery)
-                .updateValue(data.batteryLevel <= 10 ? Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW : Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL);
+                .updateValue(data.batteryLevel <= that.lowBatteryWarningLevel ? Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW : Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL);
 
             that.humidityService.getCharacteristic(Characteristic.StatusLowBattery)
-                .updateValue(data.batteryLevel <= 10 ? Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW : Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL);
+                .updateValue(data.batteryLevel <= that.lowBatteryWarningLevel ? Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW : Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL);
 
             if (that.humidityAlert) {
                 that.humidityAlertService.getCharacteristic(Characteristic.StatusLowBattery)
-                    .updateValue(data.batteryLevel <= 10 ? Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW : Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL);
+                    .updateValue(data.batteryLevel <= that.lowBatteryWarningLevel ? Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW : Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL);
             }
 
             if (that.lowLightAlert) {
                 that.lowLightAlertService.getCharacteristic(Characteristic.StatusLowBattery)
-                    .updateValue(data.batteryLevel <= 10 ? Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW : Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL);
+                    .updateValue(data.batteryLevel <= that.lowBatteryWarningLevel ? Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW : Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL);
             }
         }
     });
