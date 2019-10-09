@@ -38,7 +38,7 @@ Ensure you know the MAC address of your Xiaomi Flower Care. You can use `hcitool
 
 ## Known Issues
 
-
+Node 10 and up are not supported (see [#2 comment](https://github.com/honkmaster/homebridge-mi-flower-care/issues/2#issuecomment-474005612)). [hannseman/homebridge-mi-hygrothermograph](https://github.com/hannseman/homebridge-mi-hygrothermograph) is a viable alternative.
 
 ## Example Configuration
 
