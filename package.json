@@ -1,6 +1,6 @@
 {
     "name": "homebridge-mi-flower-care",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "This is a homebridge plugin for the Xiaomi Mi Flora / Xiaomi Flower Care devices.",
     "main": "index.js",
     "scripts": {
