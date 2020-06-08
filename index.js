@@ -1,4 +1,4 @@
-var MiFlora = require('node-mi-flora');
+var MiFlora = require('node-mi-flora-classic-updated');
 
 var Service, Characteristic, HomebridgeAPI, FakeGatoHistoryService;
 var inherits = require('util').inherits;
@@ -13,7 +13,6 @@ module.exports = function (homebridge) {
 
     homebridge.registerAccessory("homebridge-mi-flower-care", "mi-flower-care", MiFlowerCarePlugin);
 };
-
 
 function MiFlowerCarePlugin(log, config) {
     var that = this;
@@ -140,7 +139,6 @@ function MiFlowerCarePlugin(log, config) {
         }, (that.interval - 0.1) * 1000)
     }, this.interval * 1000);
 }
-
 
 MiFlowerCarePlugin.prototype.getFirmwareRevision = function (callback) {
     callback(null, this.storedData.firmware ? this.storedData.firmware.firmwareVersion : '0.0.0');
@@ -322,7 +320,6 @@ MiFlowerCarePlugin.prototype.setUpServices = function () {
     this.plantSensorService.getCharacteristic(SoilFertility)
         .on('get', this.getCurrentFertility.bind(this));
 };
-
 
 MiFlowerCarePlugin.prototype.getServices = function () {
     var services = [this.informationService, this.batteryService, this.lightService, this.tempService, this.humidityService, this.plantSensorService, this.fakeGatoHistoryService];

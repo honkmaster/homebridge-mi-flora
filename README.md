@@ -26,6 +26,7 @@ This plugin is using [node-mi-flora](https://github.com/demirhanaydin/node-mi-fl
 For more details and descriptions for other platforms see the [Noble documentation](https://github.com/noble/noble#readme). At the moment [Noble](https://www.npmjs.com/package/noble) does not support [Node 10](https://github.com/noble/node-bluetooth-hci-socket/issues/84). Please use Node 9 if you want to use this plugin, untis the issues with Noble are resolved.
 
 
+
 #### MAC address
 
 Ensure you know the MAC address of your Xiaomi Flower Care. You can use `hcitool lescan` to scan for devices. The device will appear as `AA:BB:CC:DD:EE:FF Flower care` in the list.
@@ -38,7 +39,7 @@ Ensure you know the MAC address of your Xiaomi Flower Care. You can use `hcitool
 
 ## Known Issues
 
-
+* When using this plugin and 'homebridge-mi-hygrothermograph' no data will be receviced.
 
 ## Example Configuration
 
