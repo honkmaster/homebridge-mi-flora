@@ -85,6 +85,11 @@ function MiFlowerCarePlugin(log, config) {
             that.humidityService.getCharacteristic(Characteristic.StatusActive)
                 .updateValue(true);
 
+            that.fertilityService.getCharacteristic(Characteristic.CurrentFertility)
+                .updateValue(data.moisture);
+            that.fertilityService.getCharacteristic(Characteristic.StatusActive)
+                .updateValue(true);
+
             if (that.humidityAlert) {
                 that.humidityAlertService.getCharacteristic(Characteristic.ContactSensorState)
                     .updateValue(data.moisture <= that.humidityAlertLevel ? Characteristic.ContactSensorState.CONTACT_NOT_DETECTED : Characteristic.ContactSensorState.CONTACT_DETECTED);
@@ -260,6 +265,14 @@ MiFlowerCarePlugin.prototype.setUpServices = function () {
     this.humidityService.getCharacteristic(Characteristic.StatusLowBattery)
         .on('get', this.getStatusLowBattery.bind(this));
     this.humidityService.getCharacteristic(Characteristic.StatusActive)
+        .on('get', this.getStatusActive.bind(this));
+
+    this.fertilityService = new Service.FertilitySensor(this.name);
+    this.fertilityService.getCharacteristic(Characteristic.CurrentFertility)
+        .on('get', this.getCurrentFertility.bind(this));
+    this.fertilityService.getCharacteristic(Characteristic.StatusLowBattery)
+        .on('get', this.getStatusLowBattery.bind(this));
+    this.fertilityService.getCharacteristic(Characteristic.StatusActive)
         .on('get', this.getStatusActive.bind(this));
 
     if (this.humidityAlert) {
