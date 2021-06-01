@@ -40,6 +40,13 @@ function MiFlowerCarePlugin(log, config) {
         this.lowLightAlert = false;
     }
 
+    if (config.lowFertilityAlertLevel != null) {
+        this.lowFertilityAlert = true;
+        this.lowFertilityAlertLevel = config.lowFertilityAlertLevel;
+    } else {
+        this.lowFertilityAlert = false;
+    }
+
     if (config.lowBatteryWarningLevel != null && typeof config.lowBatteryWarningLevel === "number") {
         this.lowBatteryWarningLevel = config.lowBatteryWarningLevel;
     } else {
@@ -91,6 +98,13 @@ function MiFlowerCarePlugin(log, config) {
                 that.lowLightAlertService.getCharacteristic(Characteristic.StatusActive)
                     .updateValue(true);
             }
+
+            if (that.lowFertilityAlert) {
+                that.lowFertilityAlertService.getCharacteristic(Characteristic.ContactSensorState)
+                    .updateValue(data.lux <= that.lowFertilityAlertLevel ? Characteristic.ContactSensorState.CONTACT_NOT_DETECTED : Characteristic.ContactSensorState.CONTACT_DETECTED);
+                that.lowFertilityAlertService.getCharacteristic(Characteristic.StatusActive)
+                    .updateValue(true);
+            }
         }
     });
 
@@ -119,12 +133,17 @@ function MiFlowerCarePlugin(log, config) {
 
             if (that.humidityAlert) {
                 that.humidityAlertService.getCharacteristic(Characteristic.StatusLowBattery)
-                    .updateValue(data.batteryLevel <= that.lowBatteryWarningLevel ? Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW : Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL);
+                    .updateValue(data.moisture <= that.humidityAlertLevel ? Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW : Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL);
             }
 
             if (that.lowLightAlert) {
                 that.lowLightAlertService.getCharacteristic(Characteristic.StatusLowBattery)
-                    .updateValue(data.batteryLevel <= that.lowBatteryWarningLevel ? Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW : Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL);
+                    .updateValue(data.lux <= that.lowLightAlertLevel ? Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW : Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL);
+            }
+
+            if (that.lowFertilityAlert) {
+                that.lowFertilityAlertService.getCharacteristic(Characteristic.StatusLowBattery)
+                    .updateValue(data.fertility <= that.lowFertilityAlertLevel ? Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW : Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL);
             }
         }
     });
@@ -171,6 +190,14 @@ MiFlowerCarePlugin.prototype.getStatusLowMoisture = function (callback) {
 MiFlowerCarePlugin.prototype.getStatusLowLight = function (callback) {
     if (this.storedData.data) {
         callback(null, this.storedData.data.lux <= this.lowLightAlertLevel ? Characteristic.ContactSensorState.CONTACT_NOT_DETECTED : Characteristic.ContactSensorState.CONTACT_DETECTED);
+    } else {
+        callback(null, Characteristic.ContactSensorState.CONTACT_DETECTED);
+    }
+};
+
+MiFlowerCarePlugin.prototype.getStatusLowFertility = function (callback) {
+    if (this.storedData.data) {
+        callback(null, this.storedData.data.fertility <= this.lowFertilityAlertLevel ? Characteristic.ContactSensorState.CONTACT_NOT_DETECTED : Characteristic.ContactSensorState.CONTACT_DETECTED);
     } else {
         callback(null, Characteristic.ContactSensorState.CONTACT_DETECTED);
     }
@@ -255,6 +282,16 @@ MiFlowerCarePlugin.prototype.setUpServices = function () {
             .on('get', this.getStatusActive.bind(this));
     }
 
+    if (this.lowFertilityAlert) {
+        this.lowFertilityAlertService = new Service.ContactSensor(this.name + " Low Fertility", "fertility");
+        this.lowFertilityAlertService.getCharacteristic(Characteristic.ContactSensorState)
+            .on('get', this.getStatusLowFertility.bind(this));
+        this.lowFertilityAlertService.getCharacteristic(Characteristic.StatusLowBattery)
+            .on('get', this.getStatusLowBattery.bind(this));
+        this.lowFertilityAlertService.getCharacteristic(Characteristic.StatusActive)
+            .on('get', this.getStatusActive.bind(this));
+    }
+
     this.fakeGatoHistoryService = new FakeGatoHistoryService("room", this, { storage: 'fs' });
 
     /*
@@ -328,6 +365,9 @@ MiFlowerCarePlugin.prototype.getServices = function () {
     }
     if (this.lowLightAlert) {
         services[services.length] = this.lowLightAlertService;
+    }
+    if (this.lowFertilityAlert) {
+        services[services.length] = this.lowLightFertilityService;
     }
     return services;
 };
